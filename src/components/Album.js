@@ -12,8 +12,9 @@ class Album extends Component {
 
   this.state = {
     album: album,
-    currentSong: album.songs[0],
-    isPlaying: false
+    currentSong: false,
+    isPlaying: false,
+    isHovered: false
   };
 
   this.audioElement = document.createElement('audio');
@@ -40,7 +41,7 @@ handleSongClick(song) {
   if (this.state.isPlaying && isSameSong) {
   this.pause();
   } else {
-    if (!isSameSong) { this.setSong(song); }    
+    if (!isSameSong) { this.setSong(song); }
     this.play();
   }
 }
@@ -56,19 +57,35 @@ handleSongClick(song) {
           <div id="release-info">{this.state.album.releaseInfo}</div>
         </div>
       </section>
+
       <table id="song-list">
         <colgroup>
           <col id="song-number-column" />
           <col id="song-title-column" />
           <col id="song-duration-column" />
         </colgroup>
+        <thead>
+          <tr>
+            <th>Song</th>
+            <th>Title</th>
+            <th>Length</th>
+          </tr>
+        </thead>
         <tbody>
-        {
-          this.state.album.songs.map( (song, index)=>
-           <tr className="song" key={index} onClick={() => this.handleSongClick(song)} >
-              <td>{index + 1}</td>
-              <td>{song.title}</td>
-              <td>{song.duration}</td>
+        {this.state.album.songs.map( (song, index)=>
+           <tr className="song" key={index} onClick={() => this.handleSongClick(song)}
+            onMouseEnter={() => this.setState({isHovered: index + 1})} onMouseLeave={() => this.setState({isHovered:false})} >
+              <td className="songNumber">
+                <button id = 'songButton'>
+                {this.state.currentSong.title === song.title ?
+                  (<span className={this.state.isPlaying ? "ion-pause" : "ion-play"} />)
+                  :
+                this.state.isHovered === index + 1 ? (<span className="ion-play" />) :
+                  (<span className="songNumber">{index + 1}</span>)}
+                  </button>
+              </td>
+              <td className = "songTitle">{song.title}</td>
+              <td className = "songDuration">{song.duration}</td>
            </tr>
          )
        }
